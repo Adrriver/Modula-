@@ -1,0 +1,8 @@
+<h3 class="jumbotron">Top Students</h3>
+<div class="grid grid-pad">
+  <div *ngFor="let student of students" (click)="gotoDetail(student)" class="col-1-4">
+    <div class="module student">
+      <h4>{{student.firstName}}</h4>
+    </div>
+  </div>
+</div>

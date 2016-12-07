@@ -1,0 +1,91 @@
+/* Use this implementation as a model for the game creation wizard, and be sure to reference it in
+ * documentation with "retrieved...http://plnkr.co/edit/ffYe1479WnxYOQrbxwLF?p=preview; author "waldo2188"..."
+ */
+
+
+import {Component} from 'angular2/core';
+import {
+    FORM_DIRECTIVES, FormBuilder, ControlGroup, ControlArray, Validators, NgForm, Control,
+    AbstractControl
+} from 'angular2/common';
+
+@Component({
+  selector: 'my-app',
+  template: `
+  <form [ngFormModel]="userForm">
+    <p><label><input id="date" type="text" ngControl="name" #name="ngForm"/> Name</label></p>
+    
+    <p><label><input id="date" type="text" ngControl="firstName" #firstName="ngForm"/> FirstName</label></p>
+    
+    <h3>Add address</h3>
+      <ul>
+
+        <li *ngFor="#ctrl of userForm.controls['address'].controls; #i = index" [ngFormModel]="ctrl">
+        index : {{i}}
+        
+        <input ngControl="street">
+        <input ngControl="streetNumber">
+        
+        <button type="button" (click)="removeAdress(ctrl)">Remove address</button>
+        </li>
+      </ul>
+      
+      <br />
+      <button type="button" (click)="addAdress()">Add address</button>
+      <br />
+      
+      {{ userForm.value|json }}
+      
+      <br />
+      <button type="button" (click)="showMeTheValue()">Submit</button>
+      
+  </form>
+  
+  `,
+  directives: [FORM_DIRECTIVES],
+})
+export class AppComponent {
+  userForm: ControlGroup;
+  
+  
+  constructor(private fb: FormBuilder) {
+    
+                  
+   this.userForm = fb.group({
+      name: fb.control(null, Validators.required),
+      firstName: fb.control(null, Validators.required),
+      address:  new ControlArray([])
+    });
+    
+    
+                  
+    this.addAdress();
+ }
+ 
+ addAdress(){
+   
+   this.userForm.controls['address'].push(this.fb.group({
+        street: this.fb.control("Street Value", Validators.required),
+        streetNumber: this.fb.control(null, Validators.required)
+    }));
+ }
+ 
+ removeAdress(ctrl) {
+   let addressBookList = (<Array>(<ControlGroup>this.userForm.controls['address']).controls);
+   for(var i = 0; i < addressBookList.length; i++) {
+        console.log("each address", ctrl);
+        if(addressBookList[i] == ctrl) {
+            console.log("address to remove", addressBookList[i]);
+            addressBookList.splice(i, 1);
+            (<ControlGroup>this.userForm.controls['address']).updateValueAndValidity();
+            break;
+        }
+    }
+ }
+ 
+ showMeTheValue() {
+   console.log(this.userForm.value)
+ }
+ 
+}
+
